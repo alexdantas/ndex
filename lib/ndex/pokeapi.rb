@@ -1,7 +1,9 @@
+require 'open-uri'
 require 'net/http'
 require 'json'
+require 'ndex/version'
 
-module PET
+module NDEX
 
   # Wrapper of the awesome Pokeapi - the Pokemon RESTful API.
   # Homepage: http://pokeapi.co
@@ -24,6 +26,19 @@ module PET
       fail "Invalid number '#{number}'" if not (1..718).include? number
       PokeAPI.get_data "#{ROOT_URI}/api/v1/pokemon/#{number}/"
     end
+
+    # Tells if the user can connect to the Pokeapi server.
+    #
+    # If not, that's probably an internetconnection
+    # fault or something.
+    def self.can_connect?
+      begin
+        true if open ROOT_URI
+      rescue
+        false
+      end
+    end
+
   end
 end
 

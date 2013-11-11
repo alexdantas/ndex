@@ -1,19 +1,24 @@
-require 'pet/version'
-require 'pet/pokeapi'
+require 'ndex/version'
+require 'ndex/pokeapi'
 
 require 'rndk/scroll'
 
-module PET
+module NDEX
   def self.run number
-    @@screen = RNDK::Screen.new
-    RNDK::Draw.initRNDKColor
-    Ncurses.curs_set 0
+    # if not PokeAPI.can_connect?
+    #   puts "Unable to connect to the Pokeapi server"
+    #   puts "Check your internet settings and try again"
+    #   exit 1
+    # end
 
     puts "Fetching data for Pokemon no #{number}..."
     data = PokeAPI.pokemon number
 
-    items = data.to_a
+    @@screen = RNDK::Screen.new
+    RNDK::Draw.initRNDKColor
+    Ncurses.curs_set 0
 
+    items = data.to_a
     scroll_list = RNDK::SCROLL.new(@@screen,
                                    0,
                                    0,
@@ -35,6 +40,9 @@ module PET
     scroll_list.activate ''
 
     RNDK::Screen.end_rndk
+
+  rescue SystemExit
+    exit 1
 
   rescue Exception => e
     RNDK::Screen.end_rndk
